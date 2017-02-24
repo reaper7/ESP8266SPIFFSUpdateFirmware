@@ -1,0 +1,26 @@
+#######################################
+# Syntax Coloring Map For Ultrasound
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+SPIFFSFirmware	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+getCount KEYWORD2
+startUpdate	KEYWORD2
+getName	KEYWORD2
+onStart KEYWORD2
+onEnd   KEYWORD2
+onProgress KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
