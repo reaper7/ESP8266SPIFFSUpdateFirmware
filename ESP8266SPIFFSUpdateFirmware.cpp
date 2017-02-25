@@ -152,5 +152,5 @@ bool SPIFFSUpdateFirmwareClass::begin(String _fwpath) {
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SPIFFSFIRMWARE)
-extern SPIFFSUpdateFirmwareClass SPIFFSFirmware;
+SPIFFSUpdateFirmwareClass SPIFFSFirmware = SPIFFSUpdateFirmwareClass();
 #endif
