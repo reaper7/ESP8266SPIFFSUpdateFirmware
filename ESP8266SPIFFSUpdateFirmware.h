@@ -63,8 +63,8 @@ class SPIFFSUpdateFirmwareClass
     String _firmwareext;
     String _firmwarepath;
     bool _filesystemexists;
-    size_t _minSketchSpace;
-    size_t _maxSketchSpace;
+    uint32_t _minSketchSpace;
+    uint32_t _maxSketchSpace;
 
     THandlerFunction _start_callback;
     THandlerFunction _end_callback;
