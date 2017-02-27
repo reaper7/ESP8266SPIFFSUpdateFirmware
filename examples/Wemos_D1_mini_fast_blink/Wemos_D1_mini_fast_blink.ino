@@ -64,11 +64,11 @@ void loop() {
       if (filesnumber > 0) {
         Serial.println("Firmware file(s) list:");
         for (uint8_t i = 0; i < filesnumber; i++) {
-          Serial.print(" - ");
+          Serial.print(" -> ");
           Serial.print(i);
-          Serial.print(" ;Size: ");
+          Serial.print("; Size: ");
           Serial.print(firmware.getSize(i));
-          Serial.print(" ;Name: ");
+          Serial.print("; Name: ");
           Serial.println(firmware.getName(i));
           if (firmware.getName(i) == nextSketchName) {
             nextfirmwareindex = i;

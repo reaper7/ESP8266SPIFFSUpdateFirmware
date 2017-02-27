@@ -2,31 +2,16 @@
 *  2017 Reaper7
 */
 
-#include <functional>
 #include <Esp.h>
 #include "ESP8266SPIFFSUpdateFirmware.h"
-
-typedef struct {
-  String fmfname;
-  uint32_t fmfsize;
-} fmf_struct;
-
-//temporary solution, future move to vectors
-fmf_struct fmfarr[MAXFIRMAREFILES] = {
-  {"", 0},
-  {"", 0},
-  {"", 0},
-  {"", 0},
-  {"", 0}
-};
+#include <string.h>
 
 SPIFFSUpdateFirmwareClass::SPIFFSUpdateFirmwareClass()
 : _firmwareext(FIRMWAREEXT)
 , _firmwarepath(FIRMWAREPATH)
-, _numberfirmwarefiles(0)
 , _filesystemexists(false)
-, _minSketchSpace(100000)
-, _maxSketchSpace(100000)
+, _minSketchSpace(MINBINSIZE)
+, _maxSketchSpace(MINBINSIZE)
 , _start_callback(NULL)
 , _end_callback(NULL)
 //, _error_callback(NULL)
@@ -34,8 +19,8 @@ SPIFFSUpdateFirmwareClass::SPIFFSUpdateFirmwareClass()
 {
 }
 
-SPIFFSUpdateFirmwareClass::~SPIFFSUpdateFirmwareClass(){
-
+SPIFFSUpdateFirmwareClass::~SPIFFSUpdateFirmwareClass() {
+  FirmwareListClean();
 }
 
 void SPIFFSUpdateFirmwareClass::onStart(THandlerFunction fn) {
@@ -56,18 +41,17 @@ void SPIFFSUpdateFirmwareClass::onError(THandlerFunction_Error fn) {
 */
 
 uint32_t SPIFFSUpdateFirmwareClass::getSize(uint8_t _index) {
-  if (_filesystemexists && _index >= 0 && _index < _numberfirmwarefiles) {
-    uint32_t _fsize = fmfarr[_index].fmfsize;
-    return (_fsize);
+  if (_filesystemexists && _index >= 0 && _index < FirmwareList.size()) {
+    FirmwareFileList_t entry = FirmwareList[_index];
+    return (atoi(entry.fmsize));
   } else
     return (0);
 }
 
 String SPIFFSUpdateFirmwareClass::getName(uint8_t _index) {
-  if (_filesystemexists && _index >= 0 && _index < _numberfirmwarefiles) {
-    String _fname = fmfarr[_index].fmfname;
-    _fname = _fname.substring(_firmwarepath.length() + 1, _fname.length() - _firmwareext.length()); 
-    return (_fname);
+  if (_filesystemexists && _index >= 0 && _index < FirmwareList.size()) {
+    FirmwareFileList_t entry = FirmwareList[_index];
+    return ((String)entry.fmname);
   } else
     return ("");
 }
@@ -114,30 +98,50 @@ bool SPIFFSUpdateFirmwareClass::startUpdate(String _fn, bool _rst) {
 }
 
 bool SPIFFSUpdateFirmwareClass::startUpdate(uint8_t _index, bool _rst) {
-  if (_filesystemexists && _index >= 0 && _index < _numberfirmwarefiles)
+  if (_filesystemexists && _index >= 0 && _index < FirmwareList.size())
     return (startUpdate(getName(_index), _rst));
   else
     return false;
 }
 
 uint8_t SPIFFSUpdateFirmwareClass::getCount() {
-  uint8_t fwcnt = 0;
   if (_filesystemexists) {
     Dir dir = SPIFFS.openDir(_firmwarepath);
     while (dir.next()) {
-      String fname = dir.fileName();
-      if (fname.endsWith(_firmwareext)) {
-        uint32_t fsize = dir.fileSize();
-        if (fsize > _minSketchSpace && fsize <= _maxSketchSpace) {
-          fmfarr[fwcnt].fmfname = fname;
-          fmfarr[fwcnt].fmfsize = fsize;
-          fwcnt++;
+      String _fname = dir.fileName();
+      if (_fname.endsWith(_firmwareext)) {
+        uint32_t _fsize = dir.fileSize();
+        if (_fsize > _minSketchSpace && _fsize <= _maxSketchSpace) {
+          _fname = _fname.substring(_firmwarepath.length() + 1, _fname.length() - _firmwareext.length());
+          FirmwareListAdd(_fname.c_str(), _fsize);
         }
       }
     }
   }
-  _numberfirmwarefiles = fwcnt;
-  return _numberfirmwarefiles;
+  return (FirmwareList.size());
+}
+
+void SPIFFSUpdateFirmwareClass::FirmwareListAdd(const char* fmname, uint32_t fmsize) {
+  FirmwareFileList_t newFirmware;
+  char _fsch[16];
+  sprintf(_fsch,"%lu", fmsize);  
+  newFirmware.fmsize = strdup(_fsch);
+  newFirmware.fmname = strdup(fmname);
+  FirmwareList.push_back(newFirmware);
+}
+
+void SPIFFSUpdateFirmwareClass::FirmwareListClean(void) {
+  //clear & free firmware list
+  for(uint8_t i = 0; i < FirmwareList.size(); i++) {
+    FirmwareFileList_t entry = FirmwareList[i];
+    if(entry.fmname) {
+      free(entry.fmname);
+    }
+    if(entry.fmsize) {
+      free(entry.fmsize);
+    }
+  }
+  FirmwareList.clear();
 }
 
 bool SPIFFSUpdateFirmwareClass::begin(String _fwpath) {

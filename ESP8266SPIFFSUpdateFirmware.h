@@ -7,11 +7,18 @@
 
 #include <FS.h>
 #include <functional>
+#undef min
+#undef max
+#include <vector>
 
 #define FIRMWAREEXT     ".bin"
 #define FIRMWAREPATH    "/f"
-#define MAXFIRMAREFILES 5
 #define MINBINSIZE      100000
+
+typedef struct {
+        char * fmname;
+        char * fmsize;
+} FirmwareFileList_t;
 
 class SPIFFSUpdateFirmwareClass
 {
@@ -55,16 +62,18 @@ class SPIFFSUpdateFirmwareClass
   private:
     String _firmwareext;
     String _firmwarepath;
-    uint8_t _numberfirmwarefiles;
     bool _filesystemexists;
-    uint32_t _minSketchSpace;
-    uint32_t _maxSketchSpace;
+    size_t _minSketchSpace;
+    size_t _maxSketchSpace;
 
     THandlerFunction _start_callback;
     THandlerFunction _end_callback;
 //    THandlerFunction_Error _error_callback;
     THandlerFunction_Progress _progress_callback;
-
+    
+    std::vector<FirmwareFileList_t> FirmwareList;
+    void FirmwareListAdd(const char* fmname, uint32_t fmsize);
+    void FirmwareListClean(void);    
 };
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SPIFFSFIRMWARE)
