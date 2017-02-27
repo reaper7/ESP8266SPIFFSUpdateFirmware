@@ -127,9 +127,7 @@ uint8_t SPIFFSUpdateFirmwareClass::getCount() {
     while (dir.next()) {
       String fname = dir.fileName();
       if (fname.endsWith(_firmwareext)) {
-        File fw = dir.openFile("r");
-        uint32_t fsize = fw.size();
-        fw.close();
+        uint32_t fsize = dir.fileSize();
         if (fsize > _minSketchSpace && fsize <= _maxSketchSpace) {
           fmfarr[fwcnt].fmfname = fname;
           fmfarr[fwcnt].fmfsize = fsize;
