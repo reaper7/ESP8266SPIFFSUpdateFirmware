@@ -15,6 +15,7 @@ SPIFFSFirmware	KEYWORD1
 begin	KEYWORD2
 getCount KEYWORD2
 startUpdate	KEYWORD2
+getSize	KEYWORD2
 getName	KEYWORD2
 onStart KEYWORD2
 onEnd   KEYWORD2
