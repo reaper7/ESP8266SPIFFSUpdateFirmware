@@ -37,15 +37,15 @@ typedef struct {
         char * fmsize;
 } FirmwareFileList_t;
 
-class SPIFFSUpdateFirmwareClass
+class SPIFFSUpdateFirmware
 {
   public:
 	typedef std::function<void(void)> THandlerFunction;
 //	typedef std::function<void(firm_error_t)> THandlerFunction_Error;
 	typedef std::function<void(unsigned int, unsigned int)> THandlerFunction_Progress;
 
-    SPIFFSUpdateFirmwareClass();
-    ~SPIFFSUpdateFirmwareClass();
+    SPIFFSUpdateFirmware();
+    ~SPIFFSUpdateFirmware();
 
     //This callback will be called when Upgrade has begun
     void onStart(THandlerFunction fn);
@@ -94,7 +94,7 @@ class SPIFFSUpdateFirmwareClass
 };
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SPIFFSFIRMWARE)
-extern SPIFFSUpdateFirmwareClass SPIFFSFirmware;
+extern SPIFFSUpdateFirmware SPIFFSFirmware;
 #endif
 
 #endif /* __SPIFFS_UPDATE_FIRMWARE */

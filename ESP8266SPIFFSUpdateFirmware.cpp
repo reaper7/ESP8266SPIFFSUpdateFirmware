@@ -23,7 +23,7 @@ SOFTWARE.
 #include "ESP8266SPIFFSUpdateFirmware.h"
 #include <string.h>
 
-SPIFFSUpdateFirmwareClass::SPIFFSUpdateFirmwareClass()
+SPIFFSUpdateFirmware::SPIFFSUpdateFirmware()
 : _firmwareext(FIRMWAREEXT)
 , _firmwarepath(FIRMWAREPATH)
 , _filesystemexists(false)
@@ -36,28 +36,28 @@ SPIFFSUpdateFirmwareClass::SPIFFSUpdateFirmwareClass()
 {
 }
 
-SPIFFSUpdateFirmwareClass::~SPIFFSUpdateFirmwareClass() {
+SPIFFSUpdateFirmware::~SPIFFSUpdateFirmware() {
   FirmwareListClean();
 }
 
-void SPIFFSUpdateFirmwareClass::onStart(THandlerFunction fn) {
+void SPIFFSUpdateFirmware::onStart(THandlerFunction fn) {
     _start_callback = fn;
 }
 
-void SPIFFSUpdateFirmwareClass::onEnd(THandlerFunction fn) {
+void SPIFFSUpdateFirmware::onEnd(THandlerFunction fn) {
     _end_callback = fn;
 }
 
-void SPIFFSUpdateFirmwareClass::onProgress(THandlerFunction_Progress fn) {
+void SPIFFSUpdateFirmware::onProgress(THandlerFunction_Progress fn) {
     _progress_callback = fn;
 }
 /*
-void SPIFFSUpdateFirmwareClass::onError(THandlerFunction_Error fn) {
+void SPIFFSUpdateFirmware::onError(THandlerFunction_Error fn) {
     _error_callback = fn;
 }
 */
 
-uint32_t SPIFFSUpdateFirmwareClass::getSize(uint8_t _index) {
+uint32_t SPIFFSUpdateFirmware::getSize(uint8_t _index) {
   if (_filesystemexists && _index >= 0 && _index < FirmwareList.size()) {
     FirmwareFileList_t entry = FirmwareList[_index];
     return (atoi(entry.fmsize));
@@ -65,7 +65,7 @@ uint32_t SPIFFSUpdateFirmwareClass::getSize(uint8_t _index) {
     return (0);
 }
 
-String SPIFFSUpdateFirmwareClass::getName(uint8_t _index) {
+String SPIFFSUpdateFirmware::getName(uint8_t _index) {
   if (_filesystemexists && _index >= 0 && _index < FirmwareList.size()) {
     FirmwareFileList_t entry = FirmwareList[_index];
     return ((String)entry.fmname);
@@ -73,7 +73,7 @@ String SPIFFSUpdateFirmwareClass::getName(uint8_t _index) {
     return ("");
 }
 
-bool SPIFFSUpdateFirmwareClass::startUpdate(String _fn, bool _rst) {
+bool SPIFFSUpdateFirmware::startUpdate(String _fn, bool _rst) {
   bool ret = false;
   String _fname = _firmwarepath + "/" + _fn + _firmwareext;
 
@@ -114,14 +114,14 @@ bool SPIFFSUpdateFirmwareClass::startUpdate(String _fn, bool _rst) {
   return ret;
 }
 
-bool SPIFFSUpdateFirmwareClass::startUpdate(uint8_t _index, bool _rst) {
+bool SPIFFSUpdateFirmware::startUpdate(uint8_t _index, bool _rst) {
   if (_filesystemexists && _index >= 0 && _index < FirmwareList.size())
     return (startUpdate(getName(_index), _rst));
   else
     return false;
 }
 
-uint8_t SPIFFSUpdateFirmwareClass::getCount() {
+uint8_t SPIFFSUpdateFirmware::getCount() {
   if (_filesystemexists) {
     Dir dir = SPIFFS.openDir(_firmwarepath);
     while (dir.next()) {
@@ -138,7 +138,7 @@ uint8_t SPIFFSUpdateFirmwareClass::getCount() {
   return (FirmwareList.size());
 }
 
-void SPIFFSUpdateFirmwareClass::FirmwareListAdd(const char* fmname, uint32_t fmsize) {
+void SPIFFSUpdateFirmware::FirmwareListAdd(const char* fmname, uint32_t fmsize) {
   FirmwareFileList_t newFirmware;
   char _fsch[16];
   sprintf(_fsch,"%lu", fmsize);  
@@ -147,7 +147,7 @@ void SPIFFSUpdateFirmwareClass::FirmwareListAdd(const char* fmname, uint32_t fms
   FirmwareList.push_back(newFirmware);
 }
 
-void SPIFFSUpdateFirmwareClass::FirmwareListClean(void) {
+void SPIFFSUpdateFirmware::FirmwareListClean(void) {
   //clear & free firmware list
   for(uint8_t i = 0; i < FirmwareList.size(); i++) {
     FirmwareFileList_t entry = FirmwareList[i];
@@ -161,7 +161,7 @@ void SPIFFSUpdateFirmwareClass::FirmwareListClean(void) {
   FirmwareList.clear();
 }
 
-bool SPIFFSUpdateFirmwareClass::begin(String _fwpath) {
+bool SPIFFSUpdateFirmware::begin(String _fwpath) {
   _filesystemexists = SPIFFS.begin();
   if (_filesystemexists) {
     _firmwarepath = _fwpath;
@@ -171,5 +171,5 @@ bool SPIFFSUpdateFirmwareClass::begin(String _fwpath) {
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SPIFFSFIRMWARE)
-SPIFFSUpdateFirmwareClass SPIFFSFirmware = SPIFFSUpdateFirmwareClass();
+SPIFFSUpdateFirmware SPIFFSFirmware = SPIFFSUpdateFirmware();
 #endif

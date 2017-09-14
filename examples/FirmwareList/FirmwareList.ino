@@ -1,6 +1,6 @@
 #include <ESP8266SPIFFSUpdateFirmware.h>
 
-SPIFFSUpdateFirmwareClass firmware;
+SPIFFSUpdateFirmware firmware;
 
 void setup() {
   Serial.begin(115200);

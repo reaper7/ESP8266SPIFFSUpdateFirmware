@@ -7,7 +7,7 @@ const String currentSketchName = "Wemos_D1_mini_fast_blink";
 const String nextSketchName = "Wemos_D1_mini_slow_blink";
 bool btnstate = false;
 
-SPIFFSUpdateFirmwareClass firmware;
+SPIFFSUpdateFirmware firmware;
 
 void updStart() {
   digitalWrite(LEDPIN, LOW);
