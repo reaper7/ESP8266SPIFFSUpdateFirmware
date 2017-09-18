@@ -24,7 +24,7 @@ SOFTWARE.
 #include <string.h>
 
 #define FIRMWAREEXT     ".bin"
-#define FIRMWAREPATH    "/f"
+#define FIRMWAREPATH    "/"
 #define MINBINSIZE      100000
 #define READBUFFSIZE    256 
 
