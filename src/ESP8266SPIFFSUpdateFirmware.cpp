@@ -93,7 +93,6 @@ bool SPIFFSUpdateFirmware::startUpdate(String _fn, bool _rst) {
           uint8_t ibuffer[128];
           firmfile.read((uint8_t *)ibuffer, 128);
           filerest += Update.write(ibuffer, sizeof(ibuffer));
-          delay(1);
           if (_progress_callback) {
             _progress_callback(filerest, fsize);
           }           
