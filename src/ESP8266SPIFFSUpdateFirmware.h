@@ -28,9 +28,7 @@ SOFTWARE.
 #undef max
 #include <vector>
 
-#define FIRMWAREEXT     ".bin"
 #define FIRMWAREPATH    "/f"
-#define MINBINSIZE      100000
 
 typedef struct {
         char * fmname;
@@ -73,8 +71,11 @@ class SPIFFSUpdateFirmware
     //get number of valid binary files
     uint8_t getCount();
 
-    //start this lib (init SPIFFS file system), return true when OK
-    bool begin(String _fwpath = FIRMWAREPATH);
+    //start this lib (init SPIFFS file system) and set firmware directory, return true when OK
+    bool begin(String _fwpath);
+
+    //start this lib (init SPIFFS file system) with default firmware directory (#define FIRMWAREPATH in cpp), return true when OK
+    bool begin();
 
   private:
     String _firmwareext;

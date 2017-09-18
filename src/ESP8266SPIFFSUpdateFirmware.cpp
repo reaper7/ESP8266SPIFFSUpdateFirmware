@@ -23,6 +23,11 @@ SOFTWARE.
 #include "ESP8266SPIFFSUpdateFirmware.h"
 #include <string.h>
 
+#define FIRMWAREEXT     ".bin"
+#define FIRMWAREPATH    "/f"
+#define MINBINSIZE      100000
+#define READBUFFSIZE    256 
+
 SPIFFSUpdateFirmware::SPIFFSUpdateFirmware()
 : _firmwareext(FIRMWAREEXT)
 , _firmwarepath(FIRMWAREPATH)
@@ -88,15 +93,15 @@ bool SPIFFSUpdateFirmware::startUpdate(String _fn, bool _rst) {
         uint32_t filerest = 0;
         if (_progress_callback) {
           _progress_callback(filerest, fsize);
-        }     
+        }
+        uint8_t ibuffer[READBUFFSIZE];
         while (firmfile.available()) {
-          uint32_t isize = fsize-filerest>=256?256:fsize-filerest;
-          uint8_t ibuffer[isize];
+          uint32_t isize = fsize-filerest>=READBUFFSIZE?READBUFFSIZE:fsize-filerest;
           firmfile.read((uint8_t *)ibuffer, isize);
           filerest += Update.write(ibuffer, isize);
           if (_progress_callback) {
             _progress_callback(filerest, fsize);
-          }           
+          }
         }
         if (Update.end(true)) {
           ret = true;
@@ -107,7 +112,7 @@ bool SPIFFSUpdateFirmware::startUpdate(String _fn, bool _rst) {
       }
       firmfile.close();
       if (ret && _rst) {
-        delay(100);
+        delay(250);
         ESP.restart();
       }
     }
@@ -170,6 +175,10 @@ bool SPIFFSUpdateFirmware::begin(String _fwpath) {
     _maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000; 
   }
   return (_filesystemexists);
+}
+
+bool SPIFFSUpdateFirmware::begin() {
+  begin(FIRMWAREPATH);
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SPIFFSFIRMWARE)
