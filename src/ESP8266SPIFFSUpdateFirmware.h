@@ -28,8 +28,6 @@ SOFTWARE.
 #undef max
 #include <vector>
 
-#define FIRMWAREPATH    "/f"
-
 typedef struct {
         char * fmname;
         char * fmsize;
