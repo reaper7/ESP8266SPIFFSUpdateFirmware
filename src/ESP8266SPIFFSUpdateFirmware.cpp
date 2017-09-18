@@ -24,7 +24,7 @@ SOFTWARE.
 #include <string.h>
 
 #define FIRMWAREEXT     ".bin"
-#define FIRMWAREPATH    "/"
+#define FIRMWAREPATH    ""
 #define MINBINSIZE      100000
 #define READBUFFSIZE    256 
 
@@ -178,7 +178,7 @@ bool SPIFFSUpdateFirmware::begin(String _fwpath) {
 }
 
 bool SPIFFSUpdateFirmware::begin() {
-  begin(FIRMWAREPATH);
+  return (begin(FIRMWAREPATH));
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SPIFFSFIRMWARE)
