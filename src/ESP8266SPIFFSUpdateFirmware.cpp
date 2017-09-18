@@ -88,11 +88,12 @@ bool SPIFFSUpdateFirmware::startUpdate(String _fn, bool _rst) {
         uint32_t filerest = 0;
         if (_progress_callback) {
           _progress_callback(filerest, fsize);
-        }
+        }     
         while (firmfile.available()) {
-          uint8_t ibuffer[128];
-          firmfile.read((uint8_t *)ibuffer, 128);
-          filerest += Update.write(ibuffer, sizeof(ibuffer));
+          uint32_t isize = fsize-filerest>=256?256:fsize-filerest;
+          uint8_t ibuffer[isize];
+          firmfile.read((uint8_t *)ibuffer, isize);
+          filerest += Update.write(ibuffer, isize);
           if (_progress_callback) {
             _progress_callback(filerest, fsize);
           }           
@@ -164,6 +165,7 @@ void SPIFFSUpdateFirmware::FirmwareListClean(void) {
 bool SPIFFSUpdateFirmware::begin(String _fwpath) {
   _filesystemexists = SPIFFS.begin();
   if (_filesystemexists) {
+    FirmwareListClean();
     _firmwarepath = _fwpath;
     _maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000; 
   }
