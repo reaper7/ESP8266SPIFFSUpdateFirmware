@@ -90,17 +90,17 @@ bool SPIFFSUpdateFirmware::startUpdate(String _fn, bool _rst) {
         if (_start_callback) {
           _start_callback();
         }
-        uint32_t filerest = 0;
+        uint32_t filerest = fsize;
         if (_progress_callback) {
-          _progress_callback(filerest, fsize);
+          _progress_callback((fsize-filerest), fsize);
         }
         uint8_t ibuffer[READBUFFSIZE];
         while (firmfile.available()) {
-          uint32_t isize = fsize-filerest>=READBUFFSIZE?READBUFFSIZE:fsize-filerest;
+          uint32_t isize = (filerest < READBUFFSIZE) ? filerest : READBUFFSIZE;
           firmfile.read((uint8_t *)ibuffer, isize);
-          filerest += Update.write(ibuffer, isize);
+          filerest -= Update.write(ibuffer, isize);
           if (_progress_callback) {
-            _progress_callback(filerest, fsize);
+            _progress_callback((fsize-filerest), fsize);
           }
         }
         if (Update.end(true)) {
